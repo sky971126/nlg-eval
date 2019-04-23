@@ -16,7 +16,7 @@ def _strip(s):
     return s.strip()
 
 
-def compute_metrics(hypothesis, references, no_overlap=False, no_skipthoughts=False, no_glove=False):
+def compute_metrics(hypothesis, references, no_overlap=False, no_skipthoughts=True, no_glove=False):
     with open(hypothesis, 'r') as f:
         hyp_list = f.readlines()
     ref_list = []
@@ -46,7 +46,7 @@ def compute_metrics(hypothesis, references, no_overlap=False, no_skipthoughts=Fa
                 print("%s: %0.6f" % (method, score))
                 ret_scores[method] = score
         del scorers
-
+    
     if not no_skipthoughts:
         from nlgeval.skipthoughts import skipthoughts
         import numpy as np
@@ -81,7 +81,7 @@ def compute_metrics(hypothesis, references, no_overlap=False, no_skipthoughts=Fa
     return ret_scores
 
 
-def compute_individual_metrics(ref, hyp, no_overlap=False, no_skipthoughts=False, no_glove=False):
+def compute_individual_metrics(ref, hyp, no_overlap=False, no_skipthoughts=True, no_glove=False):
     assert isinstance(hyp, six.string_types)
 
     if isinstance(ref, six.string_types):
@@ -158,7 +158,7 @@ class NLGEval(object):
                         'SkipThoughtCS',
                     } | glove_metrics
 
-    def __init__(self, no_overlap=False, no_skipthoughts=False, no_glove=False,
+    def __init__(self, no_overlap=False, no_skipthoughts=True, no_glove=False,
                  metrics_to_omit=None):
         """
         :param no_overlap: Default: Use overlap metrics.
