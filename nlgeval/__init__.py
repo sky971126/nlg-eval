@@ -290,7 +290,7 @@ class NLGEval(object):
                         ret_scores[m] = sc
                 else:
                     ret_scores[method] = score
-
+        """
         if not self.no_skipthoughts:
             vector_hyps = self.skipthought_encoder.encode([h.strip() for h in hyp_list], verbose=False)
             ref_list_T = self.np.array(ref_list).T.tolist()
@@ -298,7 +298,7 @@ class NLGEval(object):
             cosine_similarity = list(map(lambda refv: self.cosine_similarity(refv, vector_hyps).diagonal(), vector_refs))
             cosine_similarity = self.np.max(cosine_similarity, axis=0).mean()
             ret_scores['SkipThoughtCS'] = cosine_similarity
-
+        
         if not self.no_glove:
             glove_hyps = [h.strip() for h in hyp_list]
             ref_list_T = self.np.array(ref_list).T.tolist()
@@ -309,5 +309,6 @@ class NLGEval(object):
                 name, value = score.split(':')
                 value = float(value.strip())
                 ret_scores[name] = value
+        """
 
         return ret_scores
