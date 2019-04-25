@@ -187,7 +187,7 @@ class NLGEval(object):
         if not no_overlap:
             self.load_scorers()
 
-        self.no_skipthoughts = no_skipthoughts or 'SkipThoughtCS' in self.metrics_to_omit
+        #self.no_skipthoughts = no_skipthoughts or 'SkipThoughtCS' in self.metrics_to_omit
         if not self.no_skipthoughts:
             self.load_skipthought_model()
 
