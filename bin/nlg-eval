@@ -162,7 +162,7 @@ def setup(ctx, param, value):
 @click.option('--no-skipthoughts', is_flag=True, help='Flag. If provided, skip-thought cosine similarity will not be computed.')
 @click.option('--no-glove', is_flag=True, help='Flag. If provided, other word embedding based metrics will not be computed.')
 def compute_metrics(hypothesis, references, no_overlap, no_skipthoughts, no_glove):
-    nlgeval.compute_metrics(hypothesis, references, no_overlap, no_skipthoughts, no_glove)
+    nlgeval.compute_metrics(hypothesis, references, no_overlap, no_skipthoughts=True, no_glove)
 
 
 if __name__ == '__main__':
