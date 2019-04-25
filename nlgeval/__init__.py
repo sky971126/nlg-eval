@@ -47,21 +47,6 @@ def compute_metrics(hypothesis, references, no_overlap=False, no_skipthoughts=Tr
                 ret_scores[method] = score
         del scorers
 
-    if not no_glove:
-        from nlgeval.word2vec.evaluate import eval_emb_metrics
-        import numpy as np
-
-        glove_hyps = [h.strip() for h in hyp_list]
-        ref_list_T = np.array(ref_list).T.tolist()
-        glove_refs = map(lambda refl: [r.strip() for r in refl], ref_list_T)
-        scores = eval_emb_metrics(glove_hyps, glove_refs)
-        print(scores)
-        scores = scores.split('\n')
-        for score in scores:
-            name, value = score.split(':')
-            value = float(value.strip())
-            ret_scores[name] = value
-
     return ret_scores
 
 
@@ -92,20 +77,6 @@ def compute_individual_metrics(ref, hyp, no_overlap=False, no_skipthoughts=True,
                     ret_scores[m] = sc
             else:
                 ret_scores[method] = score
-
-    if not no_glove:
-        from nlgeval.word2vec.evaluate import eval_emb_metrics
-        import numpy as np
-
-        glove_hyps = [h.strip() for h in hyp_list]
-        ref_list_T = np.array(ref_list).T.tolist()
-        glove_refs = map(lambda refl: [r.strip() for r in refl], ref_list_T)
-        scores = eval_emb_metrics(glove_hyps, glove_refs)
-        scores = scores.split('\n')
-        for score in scores:
-            name, value = score.split(':')
-            value = float(value.strip())
-            ret_scores[name] = value
 
     return ret_scores
 
@@ -157,10 +128,6 @@ class NLGEval(object):
         if not no_overlap:
             self.load_scorers()
 
-        self.no_glove = no_glove or len(self.glove_metrics - self.metrics_to_omit) == 0
-        if not self.no_glove:
-            self.load_glove()
-
     def load_scorers(self):
         self.scorers = []
 
@@ -181,15 +148,6 @@ class NLGEval(object):
         if 'CIDEr' not in self.metrics_to_omit:
             self.scorers.append((Cider(), "CIDEr"))
 
-
-    def load_glove(self):
-        from nlgeval.word2vec.evaluate import Embedding
-        from nlgeval.word2vec.evaluate import eval_emb_metrics
-        import numpy as np
-        self.eval_emb_metrics = eval_emb_metrics
-        self.np = np
-        self.glove_emb = Embedding()
-
     def compute_individual_metrics(self, ref, hyp):
         assert isinstance(hyp, six.string_types)
         ref = [a.strip() for a in ref]
@@ -209,19 +167,6 @@ class NLGEval(object):
                 else:
                     ret_scores[method] = score
 
-
-        if not self.no_glove:
-            glove_hyps = [h.strip() for h in hyp_list]
-            ref_list_T = self.np.array(ref_list).T.tolist()
-            glove_refs = map(lambda refl: [r.strip() for r in refl], ref_list_T)
-            scores = self.eval_emb_metrics(glove_hyps, glove_refs, emb=self.glove_emb,
-                                           metrics_to_omit=self.metrics_to_omit)
-            scores = scores.split('\n')
-            for score in scores:
-                name, value = score.split(':')
-                value = float(value.strip())
-                ret_scores[name] = value
-
         return ret_scores
 
     def compute_metrics(self, ref_list, hyp_list):
@@ -239,17 +184,5 @@ class NLGEval(object):
                         ret_scores[m] = sc
                 else:
                     ret_scores[method] = score
-        
-        if not self.no_glove:
-            glove_hyps = [h.strip() for h in hyp_list]
-            ref_list_T = self.np.array(ref_list).T.tolist()
-            glove_refs = map(lambda refl: [r.strip() for r in refl], ref_list_T)
-            scores = self.eval_emb_metrics(glove_hyps, glove_refs, emb=self.glove_emb)
-            scores = scores.split('\n')
-            for score in scores:
-                name, value = score.split(':')
-                value = float(value.strip())
-                ret_scores[name] = value
-        
 
         return ret_scores
